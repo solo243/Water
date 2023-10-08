@@ -1,5 +1,5 @@
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -11,11 +11,13 @@ import {
   Button,
   Image,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Appearance,
+ 
 } from 'react-native';
 import debounce from 'lodash.debounce';
 import { MagnifyingGlassIcon } from 'react-native-heroicons/outline';
-// import { MapPinIcon } from 'react-native-heroicons/solid';
+import { MapPinIcon } from 'react-native-heroicons/solid';
 // import { CalendarDaysIcon } from 'react-native-heroicons/solid'
 
 import { fetchLocations, fetchweatherdata } from './weather';
@@ -24,8 +26,6 @@ import * as Progress from 'react-native-progress';
 
 
 export default function Search() {
-
-
 
 
   const [showsearch, toggalesearch] = useState(false);
@@ -39,10 +39,20 @@ export default function Search() {
   }
 
 
+  
+
+const colorscheme = useColorScheme();
+useEffect(()=>
+{
+  console.log(colorscheme)
+},[colorscheme]);
+   
+
 
   const handlocation = loc => {
     toggalesearch(false);
     setlocations([]);
+    console.log(loc)
     fetchweatherdata({
       cityname: loc.name,
       days: '7'
@@ -50,7 +60,6 @@ export default function Search() {
       console.log("got forcast ", (data))
       setweather(data);
 
-      
     })
   }
 
@@ -68,6 +77,13 @@ export default function Search() {
   const handledebounce = useCallback(debounce(handlsearch, 1200), []);
 
 
+
+
+
+
+ 
+
+
   const {current,location }= weather
 
   return (
@@ -77,7 +93,7 @@ export default function Search() {
     
 
     <ScrollView>
-      <SafeAreaView style={{ backgroundColor: '#F3F3F3' }}>
+      <SafeAreaView style={{ backgroundColor:'#F3F3F3'}}>
 
         <View style={{ position: 'relative' }}>
 
@@ -148,12 +164,14 @@ export default function Search() {
               <TextInput
                 onChangeText={handlsearch}
                 placeholder='Search'
-                placeholderTextColor={'grey'}
+                placeholderTextColor={'black'}
                 style={{
                   flex: 1,
                   textAlign: 'auto',
                   textDecorationColor: 'white',
-                  marginStart: 20
+                  marginStart: 20,
+                  // fontWeight: '500',
+                  color: colorscheme === 'dark'?'black':'black',
                 }}
               ></TextInput>
             ) : null}
@@ -175,13 +193,15 @@ export default function Search() {
           </View>
           {locations.length > 0 && showsearch ? (
             <View style={{
-              position: 'relative', backgroundColor: 'white',
+              position: 'relative', 
+              backgroundColor: colorscheme === 'dark'?'#282C35':'white',
               borderRadius: 30,
               width: '90%',
               // justifyContent: 'center',
               // alignItems:'center',
               alignSelf: 'center',
               marginTop: 20,
+              
             }}>
               {locations.map((loc, index) => {
                 let showboder = index + 1 != locations.length;
@@ -213,9 +233,12 @@ export default function Search() {
                     }}>
 
                   {/* set location fromthe handle search  */}
-                    <Text stye={{ color: 'pink', fontSize: 200,marginStart: 300}}>
-                      {loc?.name},{loc?.country}
+                  <MapPinIcon size={23} color={'grey'}/>
+                    <Text stye={{  fontSize: 200,marginStart: 300,
+                  color: colorscheme === 'dark'?'white':'black',}}>
+                    ㅤ{loc?.name}, {loc?.country}
                       </Text>
+              
                   </TouchableOpacity>
                 );
               })}
@@ -259,6 +282,7 @@ export default function Search() {
                   marginStart: 23, paddingBottom: 35, fontSize: 30,
                   color: 'white', elevation: 10
                 }}>
+                
                  {location?.name}
               
                 </Text>
@@ -272,7 +296,7 @@ export default function Search() {
                   marginBottom: 30,position: 'absolute',marginTop: 100,
                   width: 200,paddingTop: 4,marginStart: 28}}>
                 <Text style={{fontSize: 15,color: 'white'}}>
-                ,{location?.country}
+                {location?.country}
                 </Text>
                </View>
 
@@ -394,7 +418,7 @@ export default function Search() {
             }}>
               Wind
             </Text>
-            <Text style={{ marginTop: 9, fontSize: 27 }}>
+            <Text style={{ marginTop: 9, fontSize: 27 , color: colorscheme === 'dark'?'black':'black',}}>
               {current?.wind_kph}Km
             </Text>
 
@@ -427,7 +451,7 @@ export default function Search() {
               Humidity
             </Text>
             <Text
-              style={{ marginTop: 9, fontSize: 27 }}>
+              style={{ marginTop: 9, fontSize: 27,color: colorscheme === 'dark'?'black':'black' }}>
               {current?.humidity}%
             </Text>
 
@@ -450,9 +474,9 @@ export default function Search() {
 
         {/* daily forcast containair */}
 
-        <View style={{alignSelf: 'center'}}>
+        <View style={{marginStart: 30}}>
 <Text style={{fontSize: 20,color: 'black'}}>
-  Under Devlopment
+Forecast
 </Text>
 </View>
         <View style={{
@@ -467,70 +491,91 @@ export default function Search() {
 
         }}>
 
-          <View style={{
-            backgroundColor: 'white',
-            height: 160,
-            width: 130,
-            marginTop: 30,
-            marginRight: 60,
-            // borderRadius: 30,
-            borderTopRightRadius: 40,
-            borderBottomStartRadius: 40,
-            elevation: 20
-          }}>
-            {/* image card wather  */}
-            <Image source={require('./assets/wethar/MoonCloudRain.png')} style={{
-              height: 100, width: 100,
-              alignSelf: 'center', marginEnd: 10,
-              marginTop: -8
-            }} />
-            <Text style={{ fontSize: 15, alignSelf: 'center', }}>
-              Monday
-            </Text>
-            <Text style={{ fontSize: 25, alignSelf: 'center', color: '#8174CF' }}>
-              20
-            </Text>
+         
+<ScrollView  >
 
-          </View>
+{
 
-          <View style={{
-            backgroundColor: 'white',
-            elevation: 20,
-            height: 160,
-            width: 130,
-            marginTop: 30,
-            // borderRadius: 30,
-            borderTopLeftRadius: 40,
-            borderBottomEndRadius: 40,
-
-          }}>
-
-            <Image source={require('./assets/wethar/MoonCloudZap.png')} style={{
-              height: 100, width: 100,
-              alignSelf: 'center', marginEnd: 10,
-
-            }} />
-            <Text style={{ fontSize: 15, alignSelf: 'center', }}>
-              Tuesday
-            </Text>
-            <Text style={{ fontSize: 25, alignSelf: 'center', color: '#8174CF' }}>
-              23
-            </Text>
+weather?.forecast?.forecastday?.map((item,index)=>{
+             const date = new Date(item.date);
+             const options = { weekday: 'long' };
+             let dayName = date.toLocaleDateString('en-US', options);
+             dayName = dayName.split(',')[0];
 
 
-          </View>
 
-          <View style={{
-            width: 200, height: 100, position: 'absolute',
-            marginTop: 550,
-          }}>
-            <Text style={{
-              color: 'white',
-              fontSize: 15, marginStart: -60,
-            }}>
-              Made by Harshil.
-            </Text>
-          </View>
+
+                      return (
+                        <View style={{backgroundColor: 'white',height: 160,width:350,
+                        marginTop: 30,borderRadius: 30 ,alignSelf: 'center'}}>
+                
+                <Image source={{uri: 'https:'+item?.day?.condition?.icon}} style={{height: 120,
+                width: 120,
+                position: 'absolute',
+                marginEnd: -30,
+                marginStart: 210,
+                
+              }}
+                            />
+                <Text   style={{height: 120,
+                width: 200,
+                position: 'absolute',
+                marginEnd: -30,
+                marginStart: 160,
+                marginTop: 120,
+                alignContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                fontSize: 16
+                
+              }}
+              >
+                  {item?.day?.condition?.text}
+                </Text>
+              
+                          
+
+                          <Text style={{color: 'black',marginTop: 20,
+                        marginStart: 30,fontSize:17}}>{item.date}</Text>
+                          <Text style={{fontsize: 30,marginStart: 30}}>
+                    {dayName}
+                  </Text>
+
+
+                  <Text style={{color: 'black',marginStart: 30,
+                  marginTop: 15,fontSize: 20}}>
+  {weather?.location?.name}
+  </Text>
+
+                          <Text style={{color: 'black',
+                        marginStart: 30,
+                        marginTop: 1,
+                        fontSize: 35 }}>
+                            {item?.day?.avgtemp_c}&#176;
+                          </Text>
+                         
+                        </View>
+                      )
+                    })
+                  }
+
+<View style={{marginStart: 30,
+marginTop: 40,
+}}>
+  <Text style={{color: 'white',fontSize: 30}}>
+   Add location to start   
+  </Text>
+
+  <Text style={{color: 'white',fontSize: 15}}>
+    Devloped by Solo    
+  </Text>
+</View>
+
+
+
+       </ScrollView> 
+
+
         </View>
 
       </SafeAreaView>

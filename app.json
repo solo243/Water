@@ -1,4 +1,9 @@
 {
   "name": "Water",
-  "displayName": "Water"
+  "displayName": "Water",
+  "extra": {
+    "eas": {
+      "projectId": "5a8b1e38-f169-4fc6-83cd-5f1cb7cf1318"
+    }
+  }
 }
